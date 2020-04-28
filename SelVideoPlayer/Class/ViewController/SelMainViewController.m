@@ -9,28 +9,22 @@
 #import "SelMainViewController.h"
 #import "SelVideoViewController.h"
 
-@interface SelMainViewController ()
-
+@interface SelMainViewController ()<UITableViewDelegate,UITableViewDataSource>
+@property (nonatomic, strong) UITableView *mainTableView;
+@property (nonatomic, strong) NSMutableArray *dataArr;
 @end
 
 @implementation SelMainViewController
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    
-    UIButton *play = [UIButton buttonWithType:UIButtonTypeCustom];
-    play.center = self.view.center;
-    play.bounds = CGRectMake(0, 0, 200, 100);
-    [play setTitle:@"点击播放网络视频" forState:UIControlStateNormal];
-    play.backgroundColor = [UIColor blackColor];
-    [play setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-    [play addTarget:self action:@selector(playAction) forControlEvents:UIControlEventTouchUpInside];
-    [self.view addSubview:play];
+    self.title = @"视频列表";
+    [self.view addSubview:self.mainTableView];
 }
 
-- (void)playAction
-{
+- (void)playAction:(NSInteger)index{
     SelVideoViewController *videoVC = [[SelVideoViewController alloc]init];
+    videoVC.urlStr = self.dataArr[index];
     [self.navigationController pushViewController:videoVC animated:YES];
 }
 
@@ -38,15 +32,71 @@
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
-
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
+- (UITableView *)mainTableView {
+    
+    if(!_mainTableView) {
+        
+        _mainTableView = [[UITableView alloc]initWithFrame:self.view.bounds style:UITableViewStylePlain];
+        
+        _mainTableView.delegate =self;
+        
+        _mainTableView.dataSource =self;
+        
+    }
+    return _mainTableView;
 }
-*/
+- (NSMutableArray *)dataArr{
+    
+    if (!_dataArr) {
+        _dataArr = [NSMutableArray arrayWithObjects:
+                    @"http://vfx.mtime.cn/Video/2019/02/04/mp4/190204084208765161.mp4",
+                    @"http://vfx.mtime.cn/Video/2019/03/21/mp4/190321153853126488.mp4",
+                    @"http://vfx.mtime.cn/Video/2019/03/19/mp4/190319222227698228.mp4",
+                    @"http://vfx.mtime.cn/Video/2019/03/19/mp4/190319212559089721.mp4",
+                    @"http://vfx.mtime.cn/Video/2019/03/18/mp4/190318231014076505.mp4",
+                    @"http://vfx.mtime.cn/Video/2019/03/18/mp4/190318214226685784.mp4",
+                    @"http://vfx.mtime.cn/Video/2019/03/19/mp4/190319104618910544.mp4",
+                    @"http://vfx.mtime.cn/Video/2019/03/19/mp4/190319125415785691.mp4",
+                    @"http://vfx.mtime.cn/Video/2019/03/17/mp4/190317150237409904.mp4",
+                    @"http://vfx.mtime.cn/Video/2019/03/14/mp4/190314223540373995.mp4",
+                    @"http://vfx.mtime.cn/Video/2019/03/14/mp4/190314102306987969.mp4",
+                    @"http://vfx.mtime.cn/Video/2019/03/13/mp4/190313094901111138.mp4",
+                    @"http://vfx.mtime.cn/Video/2019/03/12/mp4/190312143927981075.mp4",
+                    @"http://vfx.mtime.cn/Video/2019/03/12/mp4/190312083533415853.mp4",
+                    @"http://vfx.mtime.cn/Video/2019/03/09/mp4/190309153658147087.mp4",
+                    nil];
+    }
+    return _dataArr;
+}
+#pragma mark - tableView delegate
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+    
+    return self.dataArr.count;
+    
+}
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    
+    static NSString *identify =@"cellIdentify";
+    
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:identify];
+    
+    if(!cell) {
+        
+        cell = [[UITableViewCell alloc]initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:identify];
+        
+    }
+    
+    cell.textLabel.text = [NSString stringWithFormat:@"Video-%ld",indexPath.row];//self.dataArr[indexPath.row];
+    
+    return cell;
+    
+}
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    [tableView deselectRowAtIndexPath:indexPath animated:YES];
+    [self playAction:indexPath.row];
+}
 
 @end

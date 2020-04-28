@@ -9,5 +9,7 @@
 #import <UIKit/UIKit.h>
 
 @interface SelVideoViewController : UIViewController
+/** 视频播放链接 */
+@property (nonatomic, strong) NSString *urlStr;
 
 @end
